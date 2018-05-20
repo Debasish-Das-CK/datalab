@@ -29,12 +29,39 @@ RUN ln -s /datalab/web/static/datalab.css /datalab/nbconvert/datalab.css && \
     /tools/node/bin/npm install -g ungit@1.1.0 && \
     /tools/node/bin/npm install -s chokidar@1.6.1
 
+# Install vega
+COPY /ml_vega /ml_vega
+COPY /beam /beam
+
+RUN gcloud auth activate-service-account --key-file=/ml_vega/ck-ds-spark-2d565eb24175.json
+
+RUN source activate $PYTHON_2_ENV && \
+    pushd /beam/sdks/python >> /dev/null && \
+    rm -rf dist && \
+    python setup.py sdist >> /dev/null && \
+    popd >> /dev/null && \
+    pushd /ml_vega >> /dev/null && \
+    pip install -e . && \
+    pip install -r requirements.txt && \
+    rm -rf dist && \
+    rm -rf dependencies && \
+    mkdir -p dependencies && \
+    pip download -d dependencies/ -r requirements.txt --no-deps && \
+    python setup.py sdist && \
+    popd >> /dev/null && \
+    source deactivate
+
+# Generate vega documentation
+
+# Put a connector to vega-console to show the notebooks and models pushed
+
 # Startup
 ENV ENV /root/.bashrc
 ENV SHELL /bin/bash
 ENV DATALAB_VERSION _version_
 ENV DATALAB_COMMIT _commit_
 ENV ENABLE_USAGE_REPORTING true
+ENV GOOGLE_APPLICATION_CREDENTIALS /ml_vega/ck-ds-spark-2d565eb24175.json
 
 # Startup
 ENTRYPOINT [ "/datalab/run.sh" ]

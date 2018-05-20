@@ -1,3 +1,17 @@
+# Credit Karma Vega notebook
+
+Checkout vega related repositories using ./containers/datalab/git-hooks/checkout-vega.sh
+
+setup miniconda for python environment
+
+setup node 8+
+
+sudo npm install -g typescript bower polymer-cli --unsafe-perm
+
+cd containers/datalab
+
+Build and run using ./build.sh && ./run.sh
+
 # Google Cloud DataLab
 
 [Google Cloud DataLab](https://cloud.google.com/datalab) provides a productive, interactive, and
